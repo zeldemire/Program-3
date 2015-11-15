@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="Program3" uuid="0615d80d-77eb-42d0-b0f6-8b034d5788c7">
+      <secret-storage>master_key</secret-storage>
+      <user-name>root</user-name>
+      <schema-pattern>sys.*</schema-pattern>
+      <default-schemas>sys.*</default-schemas>
+    </data-source>
+  </component>
+</project>
