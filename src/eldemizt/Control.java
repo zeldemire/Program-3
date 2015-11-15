@@ -56,10 +56,4 @@ public class Control extends HttpServlet {
         if ("select".equals(parts[2])) new select().doPost(req,resp,configuration);
     }
 
-    public static void main(String[] args) {
-        while (true)
-        {
-
-        }
-    }
 }
