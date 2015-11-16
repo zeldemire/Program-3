@@ -54,7 +54,7 @@ public class reader extends HttpServlet{
 
         //Hash map for the freemarker
         Map<String, Object> root = new HashMap<>();
-        String title = "HTTP APP V1";
+        String title = "HTTP APP V2";
         root.put("TITLE", title);
         root.put("USER", user);
         root.put("EMAIL", email);
