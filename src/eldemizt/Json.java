@@ -18,8 +18,8 @@ public class Json extends HttpServlet{
 
     public void handleRequest(HttpServletResponse response, String[] URL) throws ServletException, IOException {
         if (URL[4].equals("getkey") && URL.length == 7) getAPIKey(response,URL);
-        else if (URL[4].equals("storyList")) getStoryList(response);
-        else if (URL[4].equals("story")) getStory(response, URL[5]);
+        else if (URL[4].equals("storyList")) getStoryList(response, URL[3]);
+        else if (URL[4].equals("story")) getStory(response, URL[5], URL[3]);
         else if (URL.length <= 2 || URL.length > 7) error(response, "No API for selected");
     }
 
@@ -35,8 +35,15 @@ public class Json extends HttpServlet{
         printWriter.print(key);
     }
 
-    private void getStoryList (HttpServletResponse response) throws ServletException, IOException {
+    private void getStoryList (HttpServletResponse response, String key) throws ServletException, IOException {
         ArrayList<String> titles = new getStory().getTitle();
+        boolean keyCheck = new APIKeys().keyCheckNoUser(key);
+
+        //check key
+        if (!keyCheck) {
+            error(response, "Incorrect key.");
+            return;
+        }
         //create array of stories
         JSONArray list = new JSONArray();
 
@@ -55,7 +62,14 @@ public class Json extends HttpServlet{
 
     }
 
-    private void getStory (HttpServletResponse response, String story) throws ServletException, IOException {
+    private void getStory (HttpServletResponse response, String story, String key) throws ServletException, IOException {
+        boolean keyCheck = new APIKeys().keyCheckNoUser(key);
+
+        //check key
+        if (!keyCheck) {
+            error(response, "Incorrect key.");
+            return;
+        }
         String storyContent = new getStory(story).getText();
         PrintWriter printWriter = response.getWriter();
         response.setContentType("text/json");

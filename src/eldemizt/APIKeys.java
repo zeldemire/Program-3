@@ -79,4 +79,18 @@ public class APIKeys {
             return false;
         }
     }
+
+    public boolean keyCheckNoUser(String key) {
+        try {
+            connect();
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM API_keys WHERE user_name=?");
+            stmt.setString(1,key);
+            ResultSet rs = stmt.executeQuery();
+            return !rs.next();
+        } catch (Exception err) {
+            System.err.println("Error getting api key " + err.toString());
+            err.printStackTrace();
+            return false;
+        }
+    }
 }
