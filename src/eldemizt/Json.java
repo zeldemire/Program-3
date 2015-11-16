@@ -17,10 +17,10 @@ public class Json extends HttpServlet{
     public Json () {}
 
     public void handleRequest(HttpServletResponse response, String[] URL) throws ServletException, IOException {
-        //if (URL.length <= 2 ) error(response, "No API for: " + URL[3]);
         if (URL[4].equals("getkey") && URL.length == 7) getAPIKey(response,URL);
         else if (URL[4].equals("storyList")) getStoryList(response);
         else if (URL[4].equals("story")) getStory(response, URL[5]);
+        else if (URL.length <= 2 || URL.length > 7) error(response, "No API for selected");
     }
 
     private void getAPIKey (HttpServletResponse response, String[] URL) throws ServletException, IOException {
@@ -71,5 +71,4 @@ public class Json extends HttpServlet{
         json.put("ERROR",msg);
         out.print(json.toString());
     }
-
 }
