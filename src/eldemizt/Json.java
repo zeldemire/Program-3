@@ -40,9 +40,13 @@ public class Json extends HttpServlet{
         boolean keyCheck = new APIKeys().keyCheckNoUser(key);
 
         //check key
-        if (!keyCheck) {
+        if (keyCheck) {
             error(response, "Incorrect key.");
             return;
+        }
+
+        if (titles == null) {
+            error(response, "No stories in database");
         }
         //create array of stories
         JSONArray list = new JSONArray();
@@ -66,11 +70,16 @@ public class Json extends HttpServlet{
         boolean keyCheck = new APIKeys().keyCheckNoUser(key);
 
         //check key
-        if (!keyCheck) {
+        if (keyCheck) {
             error(response, "Incorrect key.");
             return;
         }
         String storyContent = new getStory(story).getText();
+
+        if (storyContent == null) {
+            error(response, "Incorrect story name");
+        }
+
         PrintWriter printWriter = response.getWriter();
         response.setContentType("text/json");
         printWriter.print(storyContent);
