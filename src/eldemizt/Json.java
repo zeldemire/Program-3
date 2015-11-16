@@ -18,8 +18,8 @@ public class Json extends HttpServlet{
 
     public void handleRequest(HttpServletResponse response, String[] URL) throws ServletException, IOException {
         if (URL[4].equals("getkey") && URL.length == 7) getAPIKey(response,URL);
-        else if (URL[4].equals("storyList") && URL.length <= 7) getStoryList(response, URL[3]);
-        else if (URL[4].equals("story") && URL.length <= 7) getStory(response, URL[5], URL[3]);
+        else if (URL[4].equals("storyList") && URL.length < 4) getStoryList(response, URL[3]);
+        else if (URL[4].equals("story") && URL.length < 6) getStory(response, URL[5], URL[3]);
         else if (URL.length <= 2 || URL.length > 7) error(response, "No API for selected");
     }
 
