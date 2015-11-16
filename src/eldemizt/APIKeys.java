@@ -50,7 +50,7 @@ public class APIKeys {
     public String getAPIKey(String username, String password) {
         try {
             connect();
-            String key = new Login(username, password).generateHash();
+            String key = new Login(username, password).generateAPIKey();
             if (keyCheck(username, key)) {
                 PreparedStatement stmt = conn.prepareStatement("insert into API_keys (`APIkey`,`user_name`) values (?,?)");
                 stmt.setString(1, key);
