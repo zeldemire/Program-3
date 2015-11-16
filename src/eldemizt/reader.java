@@ -63,7 +63,7 @@ public class reader extends HttpServlet{
         String books;
         String[] pageSplit;
 
-        getStory gt = new getStory("Death Deceit and Mr Sanders.sty");
+        getStory gt = new getStory(book);
 
         books = gt.getText();
         books = books.replace("<PAGE>", "");
