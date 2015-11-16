@@ -47,6 +47,7 @@ public class Json extends HttpServlet{
 
         if (titles == null) {
             error(response, "No stories in database");
+            return;
         }
         //create array of stories
         JSONArray list = new JSONArray();
@@ -78,6 +79,7 @@ public class Json extends HttpServlet{
 
         if (storyContent == null) {
             error(response, "Incorrect story name");
+            return;
         }
 
         PrintWriter printWriter = response.getWriter();
