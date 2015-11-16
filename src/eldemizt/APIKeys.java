@@ -46,11 +46,13 @@ public class APIKeys {
         try {
             connect();
             String key = new Login(username, password).generateHash();
-            PreparedStatement stmt = conn.prepareStatement("insert into API_keys (`APIkey`,`user_name`) values (?,?)");
-            stmt.setString(1,key);
-            stmt.setString(2,username);
-            stmt.executeUpdate();
-            return key;
+            if (keyCheck(username, key)) {
+                PreparedStatement stmt = conn.prepareStatement("insert into API_keys (`APIkey`,`user_name`) values (?,?)");
+                stmt.setString(1, key);
+                stmt.setString(2, username);
+                stmt.executeUpdate();
+                return key;
+            } else return key;
         } catch (Exception err) {
             System.err.println("Error getting api key " + err.toString());
             err.printStackTrace();
@@ -58,7 +60,18 @@ public class APIKeys {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(new APIKeys().JSONGetAPIKey("test", "test"));
+    private boolean keyCheck(String user, String key) {
+        try {
+            connect();
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM API_keys WHERE user_name=? AND APIkey=?");
+            stmt.setString(1,user);
+            stmt.setString(2,key);
+            ResultSet rs = stmt.executeQuery();
+            return !rs.next();
+        } catch (Exception err) {
+            System.err.println("Error getting api key " + err.toString());
+            err.printStackTrace();
+            return false;
+        }
     }
 }

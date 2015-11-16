@@ -19,8 +19,8 @@ public class Json extends HttpServlet{
     public void handleRequest(HttpServletResponse response, String[] URL) throws ServletException, IOException {
         //if (URL.length <= 2 ) error(response, "No API for: " + URL[3]);
         if (URL[4].equals("getkey") && URL.length == 7) getAPIKey(response,URL);
-        else if (URL[4].equals("storyList")) getStoryList();
-        //else if (URL[4].equals("story")) getStory(response, URL[5]);
+        else if (URL[4].equals("storyList")) getStoryList(response);
+        else if (URL[4].equals("story")) getStory(response, URL[5]);
     }
 
     private void getAPIKey (HttpServletResponse response, String[] URL) throws ServletException, IOException {
@@ -35,7 +35,7 @@ public class Json extends HttpServlet{
         printWriter.print(key);
     }
 
-    private void getStoryList () throws ServletException, IOException {
+    private void getStoryList (HttpServletResponse response) throws ServletException, IOException {
         ArrayList<String> titles = new getStory().getTitle();
         //create array of stories
         JSONArray list = new JSONArray();
@@ -49,19 +49,17 @@ public class Json extends HttpServlet{
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("StoryList", list);
 
-//        PrintWriter printWriter = response.getWriter();
-//        response.setContentType("text/json");
-//        printWriter.print(jsonObject.toString());
+        PrintWriter printWriter = response.getWriter();
+        response.setContentType("text/json");
+        printWriter.print(jsonObject.toString());
 
-        System.out.println(jsonObject.toString());
     }
 
-    private void getStory (String story) throws ServletException, IOException {
+    private void getStory (HttpServletResponse response, String story) throws ServletException, IOException {
         String storyContent = new getStory(story).getText();
-//        PrintWriter printWriter = response.getWriter();
-//        response.setContentType("text/json");
-//        printWriter.print(storyContent);
-        System.out.println(storyContent);
+        PrintWriter printWriter = response.getWriter();
+        response.setContentType("text/json");
+        printWriter.print(storyContent);
     }
 
     private void error(HttpServletResponse response, String msg) throws IOException {
@@ -74,14 +72,4 @@ public class Json extends HttpServlet{
         out.print(json.toString());
     }
 
-    public static void main(String[] args) {
-        Json j = new Json();
-        try {
-            j.getStory("book");
-        } catch (ServletException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
