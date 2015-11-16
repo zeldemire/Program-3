@@ -13,6 +13,11 @@ public class Login extends HttpServlet {
     String user = "root";
     String pwd = "Theblood5";
     String dbURL = "jdbc:mysql://localhost:3306/program3";
+    /*
+    String user = "383-sql";
+    String pwd = "test123";
+    String dbURL = "jdbc:mysql://localhost/383Story";
+     */
     Connection conn = null;
     String password, username;
     String file = "/tmp/servlet2.log";

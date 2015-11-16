@@ -13,6 +13,11 @@ public class APIKeys {
     String user = "root";
     String pwd = "Theblood5";
     String dbURL = "jdbc:mysql://localhost:3306/program3";
+    /*
+    String user = "383-sql";
+    String pwd = "test123";
+    String dbURL = "jdbc:mysql://localhost/383Story";
+     */
     Connection conn = null;
 
     public void connect() throws IOException {
