@@ -14,7 +14,6 @@ import java.util.ArrayList;
  * Created by Zach Eldemire on 11/12/15.
  */
 public class Json extends HttpServlet{
-    public Json () {}
 
     public void handleRequest(HttpServletResponse response, String[] URL) throws ServletException, IOException {
         if (URL[4].equals("getkey") && URL.length == 7) getAPIKey(response,URL);
@@ -25,6 +24,8 @@ public class Json extends HttpServlet{
 
     private void getAPIKey (HttpServletResponse response, String[] URL) throws ServletException, IOException {
         String key = new APIKeys().JSONGetAPIKey(URL[5], URL[6]);
+
+        //check to see if key is empty
         if (key == null) {
             error(response,"Could not create rest key");
             return;
@@ -45,6 +46,7 @@ public class Json extends HttpServlet{
             return;
         }
 
+        //check to see if there are any sstories in the database
         if (titles == null) {
             error(response, "No stories in database");
             return;
@@ -77,6 +79,7 @@ public class Json extends HttpServlet{
         }
         String storyContent = new getStory(story).getText();
 
+        //check to see if the story is empty
         if (storyContent == null) {
             error(response, "Incorrect story name");
             return;
