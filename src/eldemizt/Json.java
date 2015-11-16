@@ -96,4 +96,5 @@ public class Json extends HttpServlet{
         json.put("ERROR",msg);
         out.print(json.toString());
     }
+
 }

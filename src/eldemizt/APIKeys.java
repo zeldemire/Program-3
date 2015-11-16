@@ -83,7 +83,7 @@ public class APIKeys {
     public boolean keyCheckNoUser(String key) {
         try {
             connect();
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM API_keys WHERE user_name=?");
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM API_keys WHERE APIkey=?");
             stmt.setString(1,key);
             ResultSet rs = stmt.executeQuery();
             return !rs.next();
