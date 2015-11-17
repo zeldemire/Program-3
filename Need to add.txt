@@ -1,0 +1,3 @@
+I need to change Rest to its own servlet.
+Change the way that books are stored in the database
+Add comments
