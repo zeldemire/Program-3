@@ -1,5 +1,18 @@
 <html>
 <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script>
+        var page = ${PAGENUM};
+        var end = ${NUMOFPAGES};
+        $(document).ready(function(){
+            if (page == 1) $("#prev").hide();
+            else if (page == end) $("#next").hide();
+            else {
+                $("#next").show();
+                $("#prev").show();
+            }
+        });
+    </script>
     <title>${TITLE}</title>
     <style>
         body {
@@ -42,30 +55,18 @@
     </style>
 </head>
 <body>
-<div id="header">Welcome</div>
-<div id="link" style="color: black"></div>
+<div id="header">Welcome ${USER} ${EMAIL}</div>
+<div id="link" style="color: black">
+    <button id="prev">Previous page</button>
+    <button id="next">Next page</button>
+    <#--Add a home button to take you back to story selection-->
+</div>
 <div id="content" style="color: black">
-    <#--form to get user info-->
-    <form method='post' action='select'>
-        Available Stories:
-        <select name="book">
-        <#list STORY as STORIES>
-            <option>${STORIES}</option>
-        <#else>
-            <option>No stories...</option>
-        </#list>
-        </select>
-        <br>
-        Username: <br>
-        <input type="text" name="user" required><br>
-        Password: <br>
-        <input type="text" name="password" required><br>
-        Email Address: <br>
-        <input type="text" name="email" required><br>
-        <br><br>
-        <input type="submit">
-    </form>
+    <div id="divs">
+        <p>${PAGE}</p>
+    </div>
 </div>
 <div id="footer">Zach Eldemire Reader</div>
+
 </body>
 </html>

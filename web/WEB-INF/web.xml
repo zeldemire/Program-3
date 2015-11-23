@@ -6,6 +6,14 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>Control</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/Story/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>Rest</servlet-name>
+        <servlet-class>eldemizt.Rest</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Rest</servlet-name>
+        <url-pattern>/storyRest/*</url-pattern>
     </servlet-mapping>
 </web-app>

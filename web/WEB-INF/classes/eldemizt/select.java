@@ -77,7 +77,7 @@ public class select extends HttpServlet{
         //available stories that the user can read.
         List stories = new ArrayList();
         getStory gt = new getStory();
-        stories = gt.getTitle();
+        stories = gt.getTitle(true);
 
         //If no stories
         if (stories == null) stories.add("No sotries");

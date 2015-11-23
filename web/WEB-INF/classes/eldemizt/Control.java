@@ -37,7 +37,6 @@ public class Control extends HttpServlet {
         Log.log(req.getRemoteAddr() + " connected.");
         if (parts.length > 2) {
             if ("reader".equals(parts[2])) new reader().doGet(req,resp, configuration);
-            else if ("storyRest".equals(parts[2])) new Json().handleRequest(resp, parts);
             else new select().doGet(req,resp,configuration);
         }
             else new select().doGet(req,resp,configuration);

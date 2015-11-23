@@ -45,9 +45,10 @@
 <div id="header">Welcome</div>
 <div id="link" style="color: black"></div>
 <div id="content" style="color: black">
-    <form method='post' action='reader'>
+    <#--form to get user info-->
+    <form method='post' action='select'>
         Available Stories:
-        <select>
+        <select name="book">
         <#list STORY as STORIES>
             <option>${STORIES}</option>
         <#else>
@@ -56,11 +57,13 @@
         </select>
         <br>
         Username: <br>
-        <input type="text" name="user"><br>
+        <input type="text" name="user" required><br>
+        Password: <br>
+        <input type="text" name="password" required><br>
         Email Address: <br>
-        <input type="text" name="email"><br>
+        <input type="text" name="email" required><br>
         <br><br>
-        <input type="submit">
+        <button type="submit" name="page" value="1">Submit</button>
     </form>
 </div>
 <div id="footer">Zach Eldemire Reader</div>

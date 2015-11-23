@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app>
     <servlet>
-        <servlet-name>select</servlet-name>
-        <servlet-class>eldemizt.select</servlet-class>
+        <servlet-name>Control</servlet-name>
+        <servlet-class>eldemizt.Control</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>select</servlet-name>
-        <url-pattern>/Program3</url-pattern>
+        <servlet-name>Control</servlet-name>
+        <url-pattern>/Story/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>Rest</servlet-name>
+        <servlet-class>eldemizt.Rest</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Rest</servlet-name>
+        <url-pattern>/storyRest/*</url-pattern>
     </servlet-mapping>
 </web-app>

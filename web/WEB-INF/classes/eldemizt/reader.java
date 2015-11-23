@@ -33,24 +33,32 @@ public class reader extends HttpServlet{
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response, Configuration configuration) throws ServletException, IOException {
         PrintWriter writer = response.getWriter();
+        getStory gt = new getStory();
 
         //Parameters from URL
         String user = request.getParameter("user");
         String email = request.getParameter("email");
         String book = request.getParameter("book");
+        int pageNum = Integer.parseInt(request.getParameter("page"));
+        int numOfPages = gt.getBookInfo(book, false);
+        int bookID;
 
         //Book pages
-        List<String> page = new ArrayList<>();
+        String page;
+
+        bookID = gt.getBookInfo(book, true);
+
+        if (bookID == -1) bookID = 0;
+        page = gt.getText(pageNum, bookID);
 
         //Log input
-        Log.log(user + " " + email + " " + request.getRemoteAddr() + " " + book + "In reader");
-
-        //Test input
-        if (book == null) book = "";
+        Log.log(user + " " + email + " " + request.getRemoteAddr() + " " + book + " In reader " + pageNum);
 
         if (user == null) user = "";
 
         if (email == null) email = "";
+
+        if (numOfPages == -1) numOfPages = 0;
 
         //Hash map for the freemarker
         Map<String, Object> root = new HashMap<>();
@@ -59,16 +67,9 @@ public class reader extends HttpServlet{
         root.put("USER", user);
         root.put("EMAIL", email);
         root.put("PAGE", page);
+        root.put("PAGENUM", pageNum);
+        root.put("NUMOFPAGES", numOfPages);
 
-        String books;
-        String[] pageSplit;
-
-        getStory gt = new getStory(book);
-
-        books = gt.getText();
-        books = books.replace("<PAGE>", "");
-        pageSplit = books.split("</PAGE>");
-        Collections.addAll(page, pageSplit);
 
 
         Template template = configuration.getTemplate("reader_template.ftl");
