@@ -19,10 +19,13 @@ public class Json extends HttpServlet{
     Log log = new Log(restLog);
 
     public void handleRequest(HttpServletRequest request, HttpServletResponse response, String[] URL) throws ServletException, IOException {
-        if (URL[4].equals("getkey") && URL.length == 7) getAPIKey(request,response,URL);
+        if (URL.length <= 3 || URL.length > 7) {
+            error(response, "No API selected");
+            log.log("Incorrect URL from: " + request.getRemoteAddr());
+        }
+        else if (URL[4].equals("getkey") && URL.length == 7) getAPIKey(request,response,URL);
         else if (URL[4].equals("storyList")) getStoryList(request,response, URL[3]);
         else if (URL[4].equals("story")) getStory(request,response, URL[5], URL[3], URL[6]);
-        else if (URL.length <= 2 || URL.length > 7) error(response, "No API selected");
     }
 
     private void getAPIKey (HttpServletRequest request, HttpServletResponse response, String[] URL) throws ServletException, IOException {
@@ -30,7 +33,7 @@ public class Json extends HttpServlet{
 
         //check to see if key is empty
         if (key == null) {
-            log.log("Could not create rest key");
+            log.log("Could not create rest key for user: " + request.getRemoteAddr());
             error(response,"Could not create rest key");
             return;
         }
@@ -55,7 +58,7 @@ public class Json extends HttpServlet{
 
         //check to see if there are any stories in the database
         if (titles == null) {
-            log.log("No stories in database at current time.");
+            log.log("No stories in database at current time." + request.getRemoteAddr());
             error(response, "No stories in database.");
             return;
         }
@@ -125,4 +128,9 @@ public class Json extends HttpServlet{
         out.print(json.toString());
     }
 
+    public static void main(String[] args) {
+        String t = "/1/2";
+        String parts[] = t.split("/");
+        System.out.println(parts.length);
+    }
 }
