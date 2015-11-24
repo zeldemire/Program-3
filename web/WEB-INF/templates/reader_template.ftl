@@ -57,9 +57,22 @@
 <body>
 <div id="header">Welcome ${USER} ${EMAIL}</div>
 <div id="link" style="color: black">
-    <button id="prev">Previous page</button>
-    <button id="next">Next page</button>
-    <#--Add a home button to take you back to story selection-->
+    <form id="prevForm" action="reader" method="get">
+        <input type="hidden" value="${USER}" name="user">
+        <input type="hidden" value="${EMAIL}" name="email">
+        <input type="hidden" value="${BOOK}" name="book">
+        <input type="hidden" value="${PREVPAGE}" name="page">
+        <button id="prev">Previous page</button>
+    </form>
+    <form id="nextForm" action="reader" method="get">
+        <input type="hidden" value="${USER}" name="user">
+        <input type="hidden" value="${EMAIL}" name="email">
+        <input type="hidden" value="${BOOK}" name="book">
+        <input type="hidden" value="${NEXTPAGE}" name="page">
+        <button id="next" >Next page</button>
+    </form>
+
+<#--Add a home button to take you back to story selection-->
 </div>
 <div id="content" style="color: black">
     <div id="divs">

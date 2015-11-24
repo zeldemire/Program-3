@@ -42,6 +42,8 @@ public class reader extends HttpServlet{
         int pageNum = Integer.parseInt(request.getParameter("page"));
         int numOfPages = gt.getBookInfo(book, false);
         int bookID;
+        int nextPage = pageNum + 1;
+        int prevPage = pageNum - 1;
 
         //Book pages
         String page;
@@ -52,7 +54,7 @@ public class reader extends HttpServlet{
         page = gt.getText(pageNum, bookID);
 
         //Log input
-        Log.log(user + " " + email + " " + request.getRemoteAddr() + " " + book + " In reader " + pageNum);
+        Log.log(user + " " + email + " " + request.getRemoteAddr() + " " + book + " In reader page number: " + pageNum);
 
         if (user == null) user = "";
 
@@ -67,8 +69,11 @@ public class reader extends HttpServlet{
         root.put("USER", user);
         root.put("EMAIL", email);
         root.put("PAGE", page);
+        root.put("BOOK", book);
         root.put("PAGENUM", pageNum);
         root.put("NUMOFPAGES", numOfPages);
+        root.put("NEXTPAGE", nextPage);
+        root.put("PREVPAGE", prevPage);
 
 
 

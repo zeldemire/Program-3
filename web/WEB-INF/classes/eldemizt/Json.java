@@ -127,10 +127,4 @@ public class Json extends HttpServlet{
         json.put("ERROR",msg);
         out.print(json.toString());
     }
-
-    public static void main(String[] args) {
-        String t = "/1/2";
-        String parts[] = t.split("/");
-        System.out.println(parts.length);
-    }
 }

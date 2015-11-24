@@ -42,9 +42,9 @@ public class select extends HttpServlet{
 
 
     /**
-     *
-     * @param req
-     * @param resp
+     * Gets the form data from template and checks if the username and password match what is in the database.
+     * @param req used to get the parameters from the user
+     * @param resp used to write a response to the user
      * @throws ServletException
      * @throws IOException
      */
@@ -53,9 +53,8 @@ public class select extends HttpServlet{
         String username = req.getParameter("user");
         Login login = new Login(password, username);
 
-
         if(login.testPassword(login.generateHash())) {
-            Log.log(username + " successfully logged in.");
+            Log.log(username + " successfully logged in. IP: " + req.getRemoteAddr());
             new reader().doGet(req,resp,configuration);
         }
         else

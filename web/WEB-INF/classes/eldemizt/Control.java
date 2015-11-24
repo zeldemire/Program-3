@@ -36,10 +36,10 @@ public class Control extends HttpServlet {
 
         Log.log(req.getRemoteAddr() + " connected.");
         if (parts.length > 2) {
-            if ("reader".equals(parts[2])) new reader().doGet(req,resp, configuration);
+            if ("reader".equals(parts[3])) new reader().doGet(req,resp, configuration);
             else new select().doGet(req,resp,configuration);
         }
-            else new select().doGet(req,resp,configuration);
+        else new select().doGet(req,resp,configuration);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class Control extends HttpServlet {
         configuration.setServletContextForTemplateLoading(getServletContext(), "WEB-INF/templates/");
         configuration.setDefaultEncoding("UTF-8");
 
-        if ("select".equals(parts[2])) new select().doPost(req,resp,configuration);
+        if ("select".equals(parts[3])) new select().doPost(req,resp,configuration);
     }
 
 }
