@@ -71,7 +71,6 @@
         <input type="hidden" value="${NEXTPAGE}" name="page">
         <button id="next" >Next page</button>
     </form>
-
 <#--Add a home button to take you back to story selection-->
 </div>
 <div id="content" style="color: black">

@@ -2,7 +2,7 @@
 <web-app>
     <servlet>
         <servlet-name>Control</servlet-name>
-        <servlet-class>eldemizt.Control</servlet-class>
+        <servlet-class>eldemizt.view.Control</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Control</servlet-name>
@@ -10,7 +10,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>Rest</servlet-name>
-        <servlet-class>eldemizt.Rest</servlet-class>
+        <servlet-class>eldemizt.json.Rest</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Rest</servlet-name>

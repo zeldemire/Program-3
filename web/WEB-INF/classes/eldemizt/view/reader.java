@@ -1,10 +1,12 @@
-package eldemizt;
+package eldemizt.view;
 
 /**
  * Created by Zach Eldemire on 10/26/15.
  * Reader class
  * This class will read the book from the file and send it to the freemarker template
  */
+import eldemizt.model.Log;
+import eldemizt.model.getStory;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -18,7 +20,7 @@ import java.util.*;
 
 public class reader extends HttpServlet{
     String file = "/tmp/servlet2.log";
-    Log Log = new Log(file);
+    eldemizt.model.Log Log = new Log(file);
 
 
 
@@ -51,6 +53,7 @@ public class reader extends HttpServlet{
         bookID = gt.getBookInfo(book, true);
 
         if (bookID == -1) bookID = 0;
+        if (pageNum > numOfPages) pageNum = numOfPages;
         page = gt.getText(pageNum, bookID);
 
         //Log input

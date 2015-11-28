@@ -1,5 +1,8 @@
-package eldemizt;
+package eldemizt.view;
 
+import eldemizt.model.Log;
+import eldemizt.view.reader;
+import eldemizt.view.select;
 import freemarker.template.Configuration;
 
 import javax.servlet.ServletException;
@@ -15,7 +18,7 @@ import java.net.URL;
  */
 public class Control extends HttpServlet {
     String file = "/tmp/servlet2.log";
-    Log Log = new Log(file);
+    eldemizt.model.Log Log = new Log(file);
 
     /**
      * Dispatcher for the servlets. Will get the url and call the corresponding servlet depending on the input.
@@ -37,9 +40,9 @@ public class Control extends HttpServlet {
         Log.log(req.getRemoteAddr() + " connected.");
         if (parts.length > 2) {
             if ("reader".equals(parts[3])) new reader().doGet(req,resp, configuration);
-            else new select().doGet(req,resp,configuration);
+            else new LoginHandler().doGet(resp,configuration);
         }
-        else new select().doGet(req,resp,configuration);
+        else new LoginHandler().doGet(resp,configuration);
     }
 
     @Override
@@ -53,6 +56,7 @@ public class Control extends HttpServlet {
         configuration.setDefaultEncoding("UTF-8");
 
         if ("select".equals(parts[3])) new select().doPost(req,resp,configuration);
+        else if ("LoginHandler".equals(parts[3])) new LoginHandler().doPost(req,resp,configuration);
     }
 
 }

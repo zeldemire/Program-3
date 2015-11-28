@@ -1,5 +1,7 @@
-package eldemizt;
+package eldemizt.view;
 
+import eldemizt.model.getStory;
+import eldemizt.model.Login;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
@@ -21,20 +23,17 @@ import java.util.Map;
  */
 public class select extends HttpServlet{
 
-    String file = "/tmp/servlet2.log";
-    Log Log = new Log(file);
-
     /**
      * doGet function that gets the printwriter that will communicate with the client.
-     * @param request used to get the parameters from the user
      * @param response used to write a response to the user
      * @throws ServletException
      * @throws IOException
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response, Configuration configuration) throws ServletException, IOException {
+    protected void doGet( HttpServletResponse response, Configuration configuration, boolean admin) throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         try {
-            this.createPage(out,configuration);
+            if (admin) this.createAdminPage(out,configuration);
+            else this.createPage(out,configuration);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,16 +48,7 @@ public class select extends HttpServlet{
      * @throws IOException
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse resp, Configuration configuration) throws ServletException, IOException {
-        String password = req.getParameter("password");
-        String username = req.getParameter("user");
-        Login login = new Login(password, username);
-
-        if(login.testPassword(login.generateHash())) {
-            Log.log(username + " successfully logged in. IP: " + req.getRemoteAddr());
-            new reader().doGet(req,resp,configuration);
-        }
-        else
-            resp.sendRedirect("select");
+        new reader().doGet(req,resp,configuration);
     }
 
     /**
@@ -75,13 +65,43 @@ public class select extends HttpServlet{
 
         //available stories that the user can read.
         List stories = new ArrayList();
-        getStory gt = new getStory();
+        eldemizt.model.getStory gt = new getStory();
         stories = gt.getTitle(true);
 
         //If no stories
         if (stories == null) stories.add("No sotries");
 
         root.put("STORY", stories);
+        root.put("ADMIN", false);
+        root.put("NUMOFPAGES", 0);
+
+        //load the template
+        Template template = configuration.getTemplate("select_template.ftl");
+        template.process(root, writer);
+    }
+
+    /**
+     * This method will generate the admin page that the user is going to see.
+     * @param writer used to communicate with freemarker template
+     * @throws Exception
+     */
+    protected void createAdminPage(PrintWriter writer, Configuration configuration) throws Exception{
+
+        Login login = new Login("admin", "admin");
+        String apiKey = login.generateAPIKey();
+
+        //freemarker hashmap
+        Map<String, Object> root = new HashMap<>();
+        String title = "HTTP APP V2 Admin";
+        root.put("TITLE", title);
+
+        //available stories that the user can read.
+        List stories = new ArrayList();
+        eldemizt.model.getStory gt = new getStory();
+        stories = gt.getTitle(true);
+
+        root.put("STORY", stories);
+        root.put("ADMIN", true);
 
         //load the template
         Template template = configuration.getTemplate("select_template.ftl");

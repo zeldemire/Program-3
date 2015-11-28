@@ -1,4 +1,4 @@
-package eldemizt;
+package eldemizt.model;
 
 import javax.servlet.http.HttpServlet;
 import java.io.IOException;
@@ -21,9 +21,9 @@ public class Login extends HttpServlet {
     Connection conn = null;
     String password, username;
     String file = "/tmp/servlet2.log";
-    Log Log = new Log(file);
+    eldemizt.model.Log Log = new Log(file);
 
-    Login(String password, String username) {
+    public Login(String password, String username) {
         this.password = password;
         this.username = username;
     }
@@ -38,12 +38,8 @@ public class Login extends HttpServlet {
         }
     }
 
-    protected boolean testPassword(String password) {
+    public boolean testPassword(String password) {
         String content = null;
-        if (!username.equals("test")) {
-            Log.log("Invalid username: " + username);
-            return false;
-        }
         try {
             connect();
             Statement stmt = conn.createStatement();
@@ -61,7 +57,7 @@ public class Login extends HttpServlet {
         return password.equals(content);
     }
 
-    protected String generateHash() {
+    public String generateHash() {
         String generatedPassword = null;
         try {
             // Create MessageDigest instance for MD5
@@ -87,7 +83,7 @@ public class Login extends HttpServlet {
         return generatedPassword;
     }
 
-    protected String generateAPIKey() {
+    public String generateAPIKey() {
         String generatedPassword = null;
         try {
             // Create MessageDigest instance for MD5
@@ -112,6 +108,20 @@ public class Login extends HttpServlet {
             e.printStackTrace();
         }
         return generatedPassword;
+    }
+
+    public boolean isAdmin() {
+        try {
+            connect();
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM login WHERE user_name='admin' AND password=?;");
+            ps.setString(1,generateHash());
+            ResultSet rs = ps.executeQuery();
+
+            return rs.next();
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
 

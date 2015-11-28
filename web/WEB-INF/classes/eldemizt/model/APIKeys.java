@@ -1,4 +1,4 @@
-package eldemizt;
+package eldemizt.model;
 
 /**
  * Created by Zach Eldemire on 11/14/15.
@@ -7,6 +7,7 @@ package eldemizt;
  */
 import java.io.IOException;
 import java.sql.*;
+
 import org.json.*;
 
 public class APIKeys {

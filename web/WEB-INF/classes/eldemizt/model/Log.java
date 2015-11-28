@@ -1,4 +1,4 @@
-package eldemizt;
+package eldemizt.model;
 
 /**
  * Created by Zach Eldemire on 10/27/15.
@@ -30,12 +30,8 @@ public class Log {
             bw.flush();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (bw != null) try {
-                bw.close();
-            } catch (IOException ioe2) {
-            }
         }
+
     }
 
 
