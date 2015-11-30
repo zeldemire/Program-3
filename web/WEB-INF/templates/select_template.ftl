@@ -9,10 +9,14 @@
             var numOfPages = 0;
             var bookID;
 
+            /**
+             * Tests to see if the user is an admin. If the user is an admin the admin page is shown.
+             */
             if(${ADMIN?c}) {
                 $(".admin").show();
                 $("#prev").hide();
                 $("#next").hide();
+                $("#bookinfot").hide();
                 $("#submitButton").hide();
                 $("#addPage").hide();
                 $("#submitForm").hide();
@@ -36,6 +40,7 @@
                 $("#submitButton").hide();
                 $("#addPage").hide();
                 $("#book").hide();
+                $("#bookinfot").hide();
                 $("#booktitle").hide();
                 $("#titleSubmit").hide();
                 $("#submitBook").hide();
@@ -47,6 +52,10 @@
                 $("#submitForm").show();
 
             }
+
+            /**
+             * This function will load the stories from the database using getJSON.
+             */
             function reloadBooks() {
                 $.getJSON("/Program_3_war_exploded/storyRest//getkey/admin/admin", function (result) {
                     key = result.APIkey;
@@ -58,6 +67,10 @@
                 });
             }
 
+            /**
+             * This is the delete form. In this function the submit form default is prevented, and the current selected
+             * bookID is sent to the server to delete from the database. It then reloads the page.
+             */
             $("#deleteForm").submit(function(evt){
                 evt.preventDefault();
                 var decision = confirm("Are you sure you want to delete this story?");
@@ -75,6 +88,10 @@
                 }
             });
 
+            /**
+             * This is the edit form. This function handles the editing of the books. The default submission of the form
+             * is prevented.
+             */
             $("#editForm").submit(function(evt) {
                 $("#submitButton").show();
                 $("#addPage").show();
@@ -100,6 +117,10 @@
                             $("#prev").hide();
                         });
 
+                        /**
+                         * Handles the next page button. This will check to see if there is another page in the book. If
+                         * there isn't another page the next button is hidden.
+                         */
                         window.nextPage = function() {
                             page = page + 1;
                             $("#prev").show();
@@ -110,6 +131,10 @@
                             })
                         };
 
+                        /**
+                         * Handles the prev page button. This will check to see if there is a previous page to the book.
+                         * If there isn't a previous page the prev button is hidden.
+                         */
                         window.prevPage = function() {
                             page = page - 1;
                             $("#next").show();
@@ -120,17 +145,28 @@
                             })
                         };
 
+                        /**
+                         * Submits the current information on the page to the editstory function on the servlet. Communicates with
+                         * servlet using post.
+                         */
                         window.submitPage = function() {
                             $.post("/Program_3_war_exploded/storyRest/editStory/"+page+"/"+bookID, document.getElementById("ta").value);
                             $("#submitButton").hide();
                             location.reload(true);
                         };
 
+                        /**
+                         * Submits the current information in the title field to the servlet using post.
+                         */
                         window.submitInfo = function() {
                             $.post("/Program_3_war_exploded/storyRest/editTitle/"+bookID+"/"+document.getElementById("bookinfot").value);
                             location.reload(true);
                         };
 
+                        /**
+                         * Function will hide all of the other text areas and buttons except those pertaining to the editing
+                         * of the title.
+                         */
                         window.editBookInfo = function() {
                             $("#prev").hide();
                             $("#next").hide();
@@ -141,18 +177,21 @@
                             $("#titleSubmit").hide();
                             $("#submitBook").hide();
                             $("#editBookInfo").hide();
-                            $(".bookinfo").show();
+                            $("#bookinfot").show();
                             $("#backfromedit").show();
                             $("#submitInfo").show();
                         };
 
+                        /**
+                         * Back button to go back to the editing of the page contents page.
+                         */
                         window.backfromedit = function() {
                             $("#submitButton").show();
                             $("#addPage").show();
                             $("#editBookInfo").show();
                             $("#ta").show();
                             $("#submitInfo").hide();
-                            $(".bookinfo").hide();
+                            $("#bookinfot").hide();
                             $("#backfromedit").hide();
                             if (page == numOfPages) $("#next").hide();
                             else $("#next").show();
@@ -160,6 +199,10 @@
                             else $("#prev").show();
 
                         };
+
+                        /**
+                         * Sends the added page to the servlet using put, identifying the new page limit using post.
+                         */
                         window.addPage = function() {
                             $("#next").hide();
                             $("#submitButton").show();
@@ -178,12 +221,24 @@
                 })
             });
 
+            /**
+             * Shows the relevant buttons for adding a story. Title field and book field.
+             */
             window.addStory = function() {
+                $("#prev").hide();
+                $("#next").hide();
+                $("#ta").hide();
+                $("#submitButton").hide();
+                $("#addPage").hide();
+                $("#titleSubmit").hide();
+                $("#editBookInfo").hide();
                 $("#booktitle").show();
                 $("#book").show();
                 $("#submitBook").show();
-                $("#ta").hide();
 
+                /**
+                 * Submits the information in the title and book field using put.
+                 */
                 window.submitBook = function () {
                     $.ajax({
                         url: '/Program_3_war_exploded/storyRest/addbook/'+ key + '/' +document.getElementById("booktitle").value
