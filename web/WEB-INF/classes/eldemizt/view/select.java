@@ -29,11 +29,11 @@ public class select extends HttpServlet{
      * @throws ServletException
      * @throws IOException
      */
-    protected void doGet( HttpServletResponse response, Configuration configuration, boolean admin) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response, Configuration configuration, boolean admin) throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         try {
-            if (admin) this.createAdminPage(out,configuration);
-            else this.createPage(out,configuration);
+            if (admin) this.createAdminPage(request,out,configuration);
+            else this.createPage(request,out,configuration);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,7 +56,7 @@ public class select extends HttpServlet{
      * @param writer used to communicate with freemarker template
      * @throws Exception
      */
-    protected void createPage(PrintWriter writer, Configuration configuration) throws Exception{
+    protected void createPage(HttpServletRequest request, PrintWriter writer, Configuration configuration) throws Exception{
 
         //freemarker hashmap
         Map<String, Object> root = new HashMap<>();
@@ -73,6 +73,8 @@ public class select extends HttpServlet{
 
         root.put("STORY", stories);
         root.put("ADMIN", false);
+        root.put("USER", request.getParameter("user"));
+        root.put("EMAIL", request.getParameter("email"));
         root.put("NUMOFPAGES", 0);
 
         //load the template
@@ -85,7 +87,7 @@ public class select extends HttpServlet{
      * @param writer used to communicate with freemarker template
      * @throws Exception
      */
-    protected void createAdminPage(PrintWriter writer, Configuration configuration) throws Exception{
+    protected void createAdminPage(HttpServletRequest request, PrintWriter writer, Configuration configuration) throws Exception{
 
         Login login = new Login("admin", "admin");
         String apiKey = login.generateAPIKey();
@@ -102,6 +104,8 @@ public class select extends HttpServlet{
 
         root.put("STORY", stories);
         root.put("ADMIN", true);
+        root.put("USER", request.getParameter("user"));
+        root.put("EMAIL", request.getParameter("email"));
 
         //load the template
         Template template = configuration.getTemplate("select_template.ftl");

@@ -19,12 +19,24 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by Zach Eldemire on 11/12/15.
+ * Created by Zach Zach Eldemire on 11/12/15.
+ * Program 3
+ * CSE 383
+ * This class handles all of the json.
  */
 public class Json extends HttpServlet{
     String restLog = "/tmp/rest.log";
     Log log = new Log(restLog);
 
+    /**
+     * Checks the URL to see which function to pass the request to. This function handles getkey, storyList, storyTitles,
+     * getStoryID, story, and getPageNum.
+     * @param request used to get the parameters.
+     * @param response used to communicate with client.
+     * @param URL URL to check and see what function to be passed to.
+     * @throws ServletException
+     * @throws IOException
+     */
     public void handleRequest(HttpServletRequest request, HttpServletResponse response, String[] URL) throws ServletException, IOException {
         if (URL.length <= 3 || URL.length > 7) {
             error(response, "No API selected");
@@ -38,6 +50,12 @@ public class Json extends HttpServlet{
         else if (URL[4].equals("getPageNum")) getPageNum( response, Integer.parseInt(URL[5]));
     }
 
+    /**
+     * Returns the number of pages in the given book.
+     * @param response used to communicate with client.
+     * @param book book to get the number of pages for.
+     * @throws IOException
+     */
     private void getPageNum( HttpServletResponse response, int book) throws IOException {
         int pageNum = new getStory().getPageNum(book);
         JSONObject jsonObject = new JSONObject();
@@ -47,10 +65,23 @@ public class Json extends HttpServlet{
         printWriter.print(jsonObject.toString());
     }
 
+    /**
+     * Removes the spaces from the URL.
+     * @param url URL to fix.
+     * @return the fixed URL.
+     */
     private String fixUrl(String url) {
         return url.replaceAll("%20", " ");
     }
 
+    /**
+     * Returns the API key to the client.
+     * @param request Used for logging the IP address.
+     * @param response Used to communicate with the client.
+     * @param URL Used to get the username and password.
+     * @throws ServletException
+     * @throws IOException
+     */
     private void getAPIKey (HttpServletRequest request, HttpServletResponse response, String[] URL) throws ServletException, IOException {
         String key = new APIKeys().JSONGetAPIKey(URL[5], URL[6]);
 
@@ -68,6 +99,15 @@ public class Json extends HttpServlet{
         printWriter.print(key);
     }
 
+    /**
+     * Returns the titles of the stories in the database.
+     * @param request used for loggin the IP address.
+     * @param response used to communicate with the client.
+     * @param key API key.
+     * @param title Used to se if the client either wants all of the book info or just the title.
+     * @throws ServletException
+     * @throws IOException
+     */
     private void getStoryList (HttpServletRequest request, HttpServletResponse response, String key, boolean title) throws ServletException, IOException {
         ArrayList<String> titles = new getStory().getTitle(title);
         boolean keyCheck = new APIKeys().keyCheckNoUser(key);
@@ -103,6 +143,16 @@ public class Json extends HttpServlet{
         log.log("Returned storyList to user: " + request.getRemoteAddr());
     }
 
+    /**
+     * Returns the page from the book identified by the bookID to the client.
+     * @param request used for logging IP address.
+     * @param response used to communicate with client.
+     * @param bookID used to get the correct book.
+     * @param key API key.
+     * @param page page to return to client.
+     * @throws ServletException
+     * @throws IOException
+     */
     private void getStory (HttpServletRequest request, HttpServletResponse response, String bookID, String key, String page) throws ServletException, IOException {
         boolean keyCheck = new APIKeys().keyCheckNoUser(key);
         getStory gt = new getStory();
@@ -144,6 +194,14 @@ public class Json extends HttpServlet{
         log.log("Page " + page + " from bookID: " + bookID + " sent to user: " + request.getRemoteAddr());
     }
 
+    /**
+     * Used to get the bookID of a book given the title.
+     * @param request used for logging the IP address.
+     * @param response used to communicate with client
+     * @param book Title of the book to get the info from.
+     * @param key API key.
+     * @throws IOException
+     */
     private void getStoryID(HttpServletRequest request, HttpServletResponse response, String book, String key) throws IOException {
         boolean keyCheck = new APIKeys().keyCheckNoUser(key);
         getStory gt = new getStory();
@@ -170,7 +228,12 @@ public class Json extends HttpServlet{
         log.log("Returned story ID to ajax");
     }
 
-    protected void editTitleandAuthor(HttpServletRequest request, HttpServletResponse response) {
+    /**
+     * Used to edit the title of a book in the database.
+     * @param request used to get the new title and bookID.
+     * @param response used to communicate with client
+     */
+    protected void editTitleAndAuthor(HttpServletRequest request, HttpServletResponse response) {
         String title = fixUrl(getParts(request.getRequestURI(),5));
         int bookID = Integer.parseInt(getParts(request.getRequestURI(), 4));
 
@@ -179,9 +242,16 @@ public class Json extends HttpServlet{
         response.setStatus(200);
         response.setContentType("application/json");
     }
+
+    /**
+     * Edits a story in the database.
+     * @param request used to get reader for the edited page.
+     * @param response used to communicate with client.
+     * @throws IOException
+     */
     protected void editStory(HttpServletRequest request, HttpServletResponse response) throws IOException {
         BufferedReader br = request.getReader();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         String l;
 
         while ((l = br.readLine()) != null) {
@@ -196,6 +266,12 @@ public class Json extends HttpServlet{
         response.setContentType("application/json");
     }
 
+    /**
+     * Adds a page to the given book.
+     * @param request used to get reader for the page contents.
+     * @param response used to communicate with client
+     * @throws IOException
+     */
     protected void addPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         BufferedReader br = request.getReader();
         StringBuilder sb = new StringBuilder();
@@ -203,18 +279,23 @@ public class Json extends HttpServlet{
 
         while ((l = br.readLine()) != null) sb.append(l);
 
-        log.log("" + getParts(request.getRequestURI(),3));
         //3 = page, 4 = bookid
-        new getStory().addPage(Integer.parseInt(getParts(request.getRequestURI(),5)),sb.toString(), Integer.parseInt(getParts(request.getRequestURI(),4)));
+        new getStory().addPage(Integer.parseInt(getParts(request.getRequestURI(),6)),sb.toString(), Integer.parseInt(getParts(request.getRequestURI(),5)));
 
         response.setStatus(200);
         response.setContentType("application/json");
     }
 
+    /**
+     * Adds story to the database.
+     * @param request used to get URI, and page contents.
+     * @param response used to communicate with client.
+     * @throws IOException
+     */
     protected void addBook(HttpServletRequest request, HttpServletResponse response) throws IOException {
         getStory gt = new getStory();
-        String title = fixUrl(getParts(request.getRequestURI(), 4));
-        String[] content = separatePages(getParts(request.getRequestURI(),5));
+        String title = fixUrl(getParts(request.getRequestURI(), 5));
+        String[] content = separatePages(getParts(request.getRequestURI(),6));
 
         gt.addTitle(title);
         int storyID = gt.getBookID(title);
@@ -231,6 +312,11 @@ public class Json extends HttpServlet{
         response.setContentType("application/json");
     }
 
+    /**
+     * Deletes a story from the database.
+     * @param request used to get the URI.
+     * @param response used to communicate with client.
+     */
     protected void deleteStory(HttpServletRequest request, HttpServletResponse response) {
         int bookid = Integer.parseInt(getParts(request.getRequestURI(), 3));
 
@@ -239,6 +325,12 @@ public class Json extends HttpServlet{
         response.setStatus(200);
         response.setContentType("application/json");
     }
+
+    /**
+     * Separates the book by the `PAGE``~PAGE` tag.
+     * @param book the book to edit.
+     * @return the book separated into pages.
+     */
     private String[] separatePages(String book) {
         String[] pages = book.split("~PAGE");
         for (int i = 0; i < pages.length; i++) {
@@ -246,14 +338,33 @@ public class Json extends HttpServlet{
         }
         return pages;
     }
+
+    /**
+     * Gets the part of the URI.
+     * @param uri URI to split.
+     * @param index index to return.
+     * @return the string at the current index.
+     */
     private String  getParts(String uri, int index) {
         String[] parts = uri.split("/");
         return parts[index];
     }
 
+    /**
+     * Removes the `PAGE``~PAGE` tags from input.
+     * @param page page to edit.
+     * @return the page without the <PAGE></PAGE> tags.
+     */
     private String fixPage(String page) {
         return page.replaceAll("PAGE", "").replaceAll("~PAGE"," ").replaceAll("%20"," ").replaceAll("%60","");
     }
+
+    /**
+     * Function used to send error messages to the client.
+     * @param response used to communicate with client.
+     * @param msg message to send to client.
+     * @throws IOException
+     */
     private void error(HttpServletResponse response, String msg) throws IOException {
         PrintWriter out = response.getWriter();
         response.setStatus(400);
@@ -262,18 +373,5 @@ public class Json extends HttpServlet{
         JSONObject json = new JSONObject();
         json.put("ERROR",msg);
         out.print(json.toString());
-    }
-
-    public static void main(String[] args) {
-//        Json json = new Json();
-//        System.out.println(json.fixPage("%60PAGE%60HELO%60~PAGE%60%60PAGE%60THERE%60~PAGE%60"));
-
-        String content[] = { "Mars", "", "Saturn", "", "Mars" };
-
-        List<String> list = new ArrayList<String>(Arrays.asList(content));
-        list.removeAll(Collections.singleton(null));
-        String ne[] = list.toArray(new String[list.size()]);
-
-        for (String aNe : ne) System.out.print(aNe);
     }
 }

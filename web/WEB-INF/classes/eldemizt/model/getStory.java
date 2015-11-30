@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Zach Eldemire on 11/10/15.
+ * Ths class handles all of the interactions with the database.
  */
 public class getStory {
     String user = "root";
@@ -24,6 +25,10 @@ public class getStory {
 
     public getStory(){}
 
+    /**
+     * This function gets the connection to the database.
+     * @throws IOException
+     */
     public void connect() throws IOException {
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -34,12 +39,18 @@ public class getStory {
         }
     }
 
+    /**
+     * This function will return the page information from the database with the given bookID.
+     * @param page used to find what page to return.
+     * @param bookID used to find what book to get the page from.
+     * @return returns the page from the database without the <PAGE></PAGE>
+     */
     public String getText(int page, int bookID) {
         String content = null;
         try {
             connect();
             Statement stmt = conn.createStatement();
-            String sql = "select Content from Book WHERE Book_id="+bookID+" AND Page_num="+page+"";
+            String sql = "SELECT Content FROM Book WHERE Book_id="+bookID+" AND Page_num="+page+"";
             rs = stmt.executeQuery(sql);
             while(rs.next()) {
                 content = rs.getString("content");
@@ -53,12 +64,23 @@ public class getStory {
         return getPage(content);
     }
 
+    /**
+     * Helper function for the getText method.
+     * @param page page contents from database
+     * @return page without the <PAGE></PAGE> tags.
+     */
     public String getPage(String page) {
         page = page.replace("<PAGE>", "");
         page = page.replace("</PAGE>", "");
         return page;
     }
 
+    /**
+     * Used to get either the bookID or the number of pages in the book.
+     * @param book title of the book that the information is needed from.
+     * @param info true if the bookID is needed, false if the number of pages is needed.
+     * @return either the bookID or the number of pages, depending on the info variable.
+     */
     public int getBookInfo(String book , boolean info) {
         PreparedStatement ps;
         try {
@@ -85,6 +107,11 @@ public class getStory {
         return -1;
     }
 
+    /**
+     * Used to get the number of pages in the book if only the bookID is known.
+     * @param bookID used to identify what book to search for.
+     * @return number of pages.
+     */
     public int getPageNum(int bookID) {
 
         try {
@@ -96,11 +123,18 @@ public class getStory {
             if (rs.next()) return rs.getInt("Book_pages");
             else return -1;
         } catch (IOException | SQLException e) {
+            Log.log(bookID + " is not in the database");
             e.printStackTrace();
         }
         return -1;
     }
 
+    /**
+     * Gets the titles of all of the books in the database. Or to get all of the information from the Titles table.
+     * (Book_id, Book_title, Book_pages)
+     * @param info used to determine if just the title is going to be returned or all of the info.
+     * @return either the title or all of the info from the Titles database.
+     */
     public ArrayList<String> getTitle(boolean info) {
 
         try {
@@ -129,6 +163,12 @@ public class getStory {
         return titles;
     }
 
+    /**
+     * Used to edit the contents of a story.
+     * @param bookID the story to edit.
+     * @param content the contents of the page.
+     * @param page the page number to edit.
+     */
     public void editStory(int bookID, String content, int page) {
         try {
             connect();
@@ -143,6 +183,12 @@ public class getStory {
         }
     }
 
+    /**
+     * Adds a page to the book corresponding to the bookID. And adds the contents of the new page to the book.
+     * @param bookID the story to edit.
+     * @param content page to insert into book.
+     * @param page page number wher the contents should go.
+     */
     public void addPage(int bookID, String content, int page) {
         try {
             connect();
@@ -161,6 +207,10 @@ public class getStory {
         }
     }
 
+    /**
+     * Used to add a title to the Titles table.
+     * @param title title to be added.
+     */
     public void addTitle(String title) {
         try {
             connect();
@@ -173,6 +223,11 @@ public class getStory {
         }
     }
 
+    /**
+     * Used to get the bookID to the given title.
+     * @param title title to look for int the Titles table.
+     * @return the bookID for that title
+     */
     public int getBookID(String title) {
         try {
             connect();
@@ -187,6 +242,11 @@ public class getStory {
         return -1;
     }
 
+    /**
+     * Used to update the title of a book.
+     * @param title new title of the book.
+     * @param bookID used to identify which book to update.
+     */
     public void updateTitle(String title, int bookID) {
         try {
             connect();
@@ -199,6 +259,12 @@ public class getStory {
             Log.log("Failed to update story.");
         }
     }
+
+    /**
+     * Used to see if the given bookID is present in the database.
+     * @param bookID bookID to search for in the database.
+     * @return true if bookID is present, flase if not
+     */
     public boolean checkBookID(int bookID) {
         try {
             connect();
@@ -212,6 +278,11 @@ public class getStory {
         return false;
     }
 
+    /**
+     * Used to delete the story from the database. This function will delete it frmo both the Book table and the Titles
+     * table
+     * @param bookID bookID used to find what book to delete.
+     */
     public void deleteStory(int bookID) {
         try {
             connect();

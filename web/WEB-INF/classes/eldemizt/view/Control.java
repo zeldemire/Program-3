@@ -22,9 +22,9 @@ public class Control extends HttpServlet {
 
     /**
      * Dispatcher for the servlets. Will get the url and call the corresponding servlet depending on the input.
-     * If the url doesn't have a servlet it is sent to the default servlet, select.
-     * @param req
-     * @param resp
+     * If the url doesn't have a servlet it is sent to the default servlet, LoginHandler.
+     * @param req used to get parameters from client
+     * @param resp used to communicate with the client
      * @throws ServletException
      * @throws IOException
      */
@@ -45,6 +45,13 @@ public class Control extends HttpServlet {
         else new LoginHandler().doGet(resp,configuration);
     }
 
+    /**
+     * This will redirect all doPost calls from the website forms to the corresponding servlet to handle.
+     * @param req used to get the url
+     * @param resp passed onto the corresponding servlet
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         URL url = new URL(req.getRequestURL().toString());

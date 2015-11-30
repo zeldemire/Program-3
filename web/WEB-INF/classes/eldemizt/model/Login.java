@@ -8,6 +8,7 @@ import java.sql.*;
 
 /**
  * Created by Zach Eldemire on 11/9/15.
+ * This class handles the login testing for the website and REST.
  */
 public class Login extends HttpServlet {
     String user = "root";
@@ -28,6 +29,10 @@ public class Login extends HttpServlet {
         this.username = username;
     }
 
+    /**
+     * Used to get connection to database.
+     * @throws IOException
+     */
     public void connect() throws IOException {
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -38,12 +43,17 @@ public class Login extends HttpServlet {
         }
     }
 
+    /**
+     * Tests to see if the given password matches the one in the database.
+     * @param password password from the user.
+     * @return true if passwords match, false if they don't.
+     */
     public boolean testPassword(String password) {
         String content = null;
         try {
             connect();
             Statement stmt = conn.createStatement();
-            String sql = "select user_name,password from login WHERE user_name='"+username+"'";
+            String sql = "SELECT user_name,password FROM login WHERE user_name='"+username+"'";
             ResultSet rs = stmt.executeQuery(sql);
             while(rs.next()) {
                 content = rs.getString("password");
@@ -57,6 +67,10 @@ public class Login extends HttpServlet {
         return password.equals(content);
     }
 
+    /**
+     * Creates a hash of the password.
+     * @return the hashed password.
+     */
     public String generateHash() {
         String generatedPassword = null;
         try {
@@ -83,6 +97,10 @@ public class Login extends HttpServlet {
         return generatedPassword;
     }
 
+    /**
+     * Creates an API key to be used with REST and the website.
+     * @return API key
+     */
     public String generateAPIKey() {
         String generatedPassword = null;
         try {
@@ -110,6 +128,10 @@ public class Login extends HttpServlet {
         return generatedPassword;
     }
 
+    /**
+     * Tests to see if given username and password are an administrators.
+     * @return true if it is an admin false if not
+     */
     public boolean isAdmin() {
         try {
             connect();

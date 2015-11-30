@@ -43,6 +43,7 @@
                 $("#editBookInfo").hide();
                 $("#submitInfo").hide();
                 $(".bookinfo").hide();
+                $("#backfromedit").hide();
                 $("#submitForm").show();
 
             }
@@ -59,17 +60,21 @@
 
             $("#deleteForm").submit(function(evt){
                 evt.preventDefault();
-                var bookName = $("#deleteBook option:selected").text();
-                var bookid;
-                $.getJSON("/Program_3_war_exploded/storyRest/"+key+"/getStoryID/"+ bookName, function(idres){
-                    bookid=idres.ID
-                    $.ajax({
-                        url: '/Program_3_war_exploded/storyRest/'+bookid,
-                        type: 'DELETE'
+                var decision = confirm("Are you sure you want to delete this story?");
+                if(decision == true) {
+                    var bookName = $("#deleteBook option:selected").text();
+                    var bookid;
+                    $.getJSON("/Program_3_war_exploded/storyRest/"+key+"/getStoryID/"+ bookName, function(idres){
+                        bookid=idres.ID;
+                        $.ajax({
+                            url: '/Program_3_war_exploded/storyRest/'+bookid+'/'+key,
+                            type: 'DELETE'
+                        });
+                        location.reload(true);
                     });
-                });
-                location.reload(true);
+                }
             });
+
             $("#editForm").submit(function(evt) {
                 $("#submitButton").show();
                 $("#addPage").show();
@@ -164,7 +169,7 @@
                             numOfPages = addpage;
                             $("#prev").show();
                             $.ajax({
-                                url: '/Program_3_war_exploded/storyRest/addpage/'+addpage+'/'+bookID,
+                                url: '/Program_3_war_exploded/storyRest/addpage/' + key + '/'+ addpage+'/'+bookID,
                                 type: 'PUT'
                             });
                             $.post("/Program_3_war_exploded/storyRest/editStory/"+addpage+"/"+bookID, document.getElementById("ta").value)
@@ -181,7 +186,8 @@
 
                 window.submitBook = function () {
                     $.ajax({
-                        url: '/Program_3_war_exploded/storyRest/addbook/' + document.getElementById("booktitle").value + "/" + document.getElementById("book").value,
+                        url: '/Program_3_war_exploded/storyRest/addbook/'+ key + '/' +document.getElementById("booktitle").value
+                        + "/" + document.getElementById("book").value,
                         type: 'PUT'
                     });
                     document.getElementById("booktitle").value ="";
@@ -245,7 +251,7 @@
     </style>
 </head>
 <body>
-<div id="header">Welcome</div>
+<div id="header">Welcome ${USER} ${EMAIL}</div>
 <div id="link" style="color: black">
 <#--form to get user info-->
     <form id="submitForm" method='post' action='select'>
@@ -257,6 +263,8 @@
             <option>No stories...</option>
         </#list>
         </select>
+        <input type="hidden" value="${USER}" name="user">
+        <input type="hidden" value="${EMAIL}" name="email">
         <br>
         <button id="submit" type="submit" name="page" value="1">Submit</button>
     </form>

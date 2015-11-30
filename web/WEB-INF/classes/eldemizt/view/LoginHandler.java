@@ -18,12 +18,21 @@ import java.util.Map;
  * Created by Zach Eldemire on 11/26/15.
  * Program 3
  * CSE 383
+ * This class handles the login interaction with the user on the website.
  */
 public class LoginHandler extends HttpServlet{
 
-    String file = "/tmp/servlet2.log";
+    String file = "/tmp/login.log";
     eldemizt.model.Log Log = new Log(file);
 
+    /**
+     * This function will handle the doGet call from the controller. It will redirect the writer from the response and configuration
+     * to the createPage function.
+     * @param resp used to get the writer to communicate with the client
+     * @param configuration this is the freemarker configuration that is used for the templates
+     * @throws ServletException
+     * @throws IOException
+     */
     protected void doGet( HttpServletResponse resp, Configuration configuration) throws ServletException, IOException {
         PrintWriter out = resp.getWriter();
         try {
@@ -34,7 +43,7 @@ public class LoginHandler extends HttpServlet{
     }
 
     /**
-     * This method will generate the page that the user is going to see.
+     * This method will generate the page that the user is going to see using the login_template.
      * @param writer used to communicate with freemarker template
      * @throws Exception
      */
@@ -50,6 +59,16 @@ public class LoginHandler extends HttpServlet{
         template.process(root, writer);
     }
 
+    /**
+     * This function will handle the doPost request from the login form. It will check to see if the username and password match
+     * if they do the request, response, and configuration will be passed to the select class to be handled. If the user
+     * is an admin a true flag is sent to the select doGet, while non admin get a false flag.
+     * @param req used to get parameters from client
+     * @param resp used to communicate with the client
+     * @param configuration this is the freemarker configuration that is used for the templates
+     * @throws ServletException
+     * @throws IOException
+     */
     protected void doPost(HttpServletRequest req, HttpServletResponse resp, Configuration configuration) throws ServletException, IOException {
 
         String password = req.getParameter("password");
@@ -58,11 +77,11 @@ public class LoginHandler extends HttpServlet{
 
         if(login.testPassword(login.generateHash())) {
             if (login.isAdmin()) {
-                new select().doGet(resp,configuration,true);
+                new select().doGet(req,resp,configuration,true);
                 Log.log(username + " successfully logged in to admin. IP: " + req.getRemoteAddr());
             }
             else {
-                new select().doGet(resp, configuration,false);
+                new select().doGet(req,resp, configuration,false);
                 Log.log(username + " successfully logged in. IP: " + req.getRemoteAddr());
             }
         }
