@@ -75,7 +75,7 @@ public class LoginHandler extends HttpServlet{
         String username = req.getParameter("user");
         Login login = new Login(password, username);
 
-        if(login.testPassword(login.generateHash())) {
+        if(login.testPassword()) {
             if (login.isAdmin()) {
                 new select().doGet(req,resp,configuration,true);
                 Log.log(username + " successfully logged in to admin. IP: " + req.getRemoteAddr());

@@ -76,12 +76,16 @@
                 var decision = confirm("Are you sure you want to delete this story?");
                 if(decision == true) {
                     var bookName = $("#deleteBook option:selected").text();
-                    var bookid;
                     $.getJSON("/Program_3_war_exploded/storyRest/"+key+"/getStoryID/"+ bookName, function(idres){
-                        bookid=idres.ID;
+                        var deleteInfo = new Object();
+                        deleteInfo.bookID = idres.ID;
+                        console.log(deleteInfo);
                         $.ajax({
-                            url: '/Program_3_war_exploded/storyRest/'+bookid+'/'+key,
-                            type: 'DELETE'
+                            url: '/Program_3_war_exploded/storyRest/'+key,
+                            type: 'DELETE',
+                            contentType: 'application/json',
+                            dataType: 'json',
+                            data: JSON.stringify(deleteInfo)
                         });
                         location.reload(true);
                     });
@@ -126,7 +130,6 @@
                             $("#prev").show();
                             if (page == numOfPages) $("#next").hide();
                             $.getJSON("/Program_3_war_exploded/storyRest/"+key+"/story/"+bookID+"/"+page, function(bookContent){
-                                console.log(bookContent);
                                 document.getElementById("ta").value = bookContent.Story;
                             })
                         };
@@ -140,7 +143,6 @@
                             $("#next").show();
                             if (page == 1) $("#prev").hide();
                             $.getJSON("/Program_3_war_exploded/storyRest/"+key+"/story/"+bookID+"/"+page, function(bookContent){
-                                console.log(bookContent);
                                 document.getElementById("ta").value = bookContent.Story;
                             })
                         };
@@ -150,16 +152,36 @@
                          * servlet using post.
                          */
                         window.submitPage = function() {
-                            $.post("/Program_3_war_exploded/storyRest/editStory/"+page+"/"+bookID, document.getElementById("ta").value);
-                            $("#submitButton").hide();
+                            var editPage = new Object();
+                            editPage.newPage = addpage;
+                            editPage.bookID = bookID;
+                            editPage.content = document.getElementById("ta").value;
+                            $.ajax({
+                                url: '/Program_3_war_exploded/storyRest/editStory/' + key,
+                                type: 'POST',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify(editPage),
+                            });
                             location.reload(true);
+                            $("#submitButton").hide();
                         };
 
                         /**
                          * Submits the current information in the title field to the servlet using post.
                          */
                         window.submitInfo = function() {
-                            $.post("/Program_3_war_exploded/storyRest/editTitle/"+bookID+"/"+document.getElementById("bookinfot").value);
+                            var titleInfo = new Object();
+                            titleInfo.title = document.getElementById("bookinfot").value;
+                            titleInfo.bookID = bookID;
+                            $.ajax({
+                                url: '/Program_3_war_exploded/storyRest/editTitle/' + key,
+                                type: 'POST',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify(editPage),
+                            });
+                            //$.post("/Program_3_war_exploded/storyRest/editTitle/"+bookID+"/"+document.getElementById("bookinfot").value);
                             location.reload(true);
                         };
 
@@ -211,11 +233,26 @@
                             page = addpage;
                             numOfPages = addpage;
                             $("#prev").show();
+                            var addPage = new Object();
+                            addPage.newPage = addpage;
+                            addPage.bookID = bookID;
+                            addPage.content = document.getElementById("ta").value;
                             $.ajax({
-                                url: '/Program_3_war_exploded/storyRest/addpage/' + key + '/'+ addpage+'/'+bookID,
-                                type: 'PUT'
+                                url: '/Program_3_war_exploded/storyRest/addpage/' + key,
+                                type: 'PUT',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify(addPage)
                             });
-                            $.post("/Program_3_war_exploded/storyRest/editStory/"+addpage+"/"+bookID, document.getElementById("ta").value)
+                            $.ajax({
+                                url: '/Program_3_war_exploded/storyRest/editStory/' + key,
+                                type: 'POST',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify(addPage)
+                            });
+
+                            //$.post("/Program_3_war_exploded/storyRest/editStory/"+addpage+"/"+bookID, document.getElementById("ta").value)
                         }
                     })
                 })
@@ -240,10 +277,17 @@
                  * Submits the information in the title and book field using put.
                  */
                 window.submitBook = function () {
+                    var test = new Object();
+                    test.title = $('#booktitle').val();
+                    test.page = $('#book').val();
+
                     $.ajax({
-                        url: '/Program_3_war_exploded/storyRest/addbook/'+ key + '/' +document.getElementById("booktitle").value
-                        + "/" + document.getElementById("book").value,
-                        type: 'PUT'
+                        url: '/Program_3_war_exploded/storyRest/addbook/'+ key,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(test)
+
                     });
                     document.getElementById("booktitle").value ="";
                     document.getElementById("book").value="";

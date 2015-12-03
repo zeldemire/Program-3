@@ -34,8 +34,8 @@ public class APIKeys {
     public String JSONGetAPIKey(String user, String password) {
         String key = null;
 
-        Login client = new Login(user, password);
-        if (!client.testPassword(password))
+        Login client = new Login(password, user);
+        if (client.testPassword())
             key = getAPIKey(user, password);
 
         JSONObject json = new JSONObject();
@@ -51,7 +51,7 @@ public class APIKeys {
     public String getAPIKey(String username, String password) {
         try {
             connect();
-            String key = new Login(username, password).generateAPIKey();
+            String key = new Login(password, username).generateAPIKey();
             if (keyCheck(username, key)) {
                 PreparedStatement stmt = conn.prepareStatement("insert into API_keys (`APIkey`,`user_name`) values (?,?)");
                 stmt.setString(1, key);

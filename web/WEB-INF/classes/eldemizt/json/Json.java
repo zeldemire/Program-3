@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -233,9 +234,18 @@ public class Json extends HttpServlet{
      * @param request used to get the new title and bookID.
      * @param response used to communicate with client
      */
-    protected void editTitleAndAuthor(HttpServletRequest request, HttpServletResponse response) {
-        String title = fixUrl(getParts(request.getRequestURI(),5));
-        int bookID = Integer.parseInt(getParts(request.getRequestURI(), 4));
+    protected void editTitle(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+        String json = "";
+
+        if (br != null) {
+            json = br.readLine();
+        }
+
+        JSONObject jsonObject = new JSONObject(json);
+
+        String title = jsonObject.getString("title");
+        int bookID = jsonObject.getInt("bookID");
 
         new getStory().updateTitle(title, bookID);
 
@@ -250,17 +260,16 @@ public class Json extends HttpServlet{
      * @throws IOException
      */
     protected void editStory(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        BufferedReader br = request.getReader();
-        StringBuilder sb = new StringBuilder();
-        String l;
+        BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+        String json = "";
 
-        while ((l = br.readLine()) != null) {
-            sb.append(l);
+        if (br != null) {
+            json = br.readLine();
         }
 
-        //4 = page, 5 = bookid
-        new getStory().editStory(Integer.parseInt(getParts(request.getRequestURI(),5)), sb.toString(),
-                Integer.parseInt(getParts(request.getRequestURI(),4)));
+        JSONObject jsonObject = new JSONObject(json);
+
+        new getStory().editStory(jsonObject.getInt("bookID"),jsonObject.getString("content"),jsonObject.getInt("newPage"));
 
         response.setStatus(200);
         response.setContentType("application/json");
@@ -273,14 +282,17 @@ public class Json extends HttpServlet{
      * @throws IOException
      */
     protected void addPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        BufferedReader br = request.getReader();
-        StringBuilder sb = new StringBuilder();
-        String l;
+        BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+        String json = "";
 
-        while ((l = br.readLine()) != null) sb.append(l);
+        if (br != null) {
+            json = br.readLine();
+        }
 
-        //3 = page, 4 = bookid
-        new getStory().addPage(Integer.parseInt(getParts(request.getRequestURI(),6)),sb.toString(), Integer.parseInt(getParts(request.getRequestURI(),5)));
+        JSONObject jsonObject = new JSONObject(json);
+
+
+        new getStory().addPage(jsonObject.getInt("bookID"),jsonObject.getString("content"),jsonObject.getInt("newPage"));
 
         response.setStatus(200);
         response.setContentType("application/json");
@@ -294,8 +306,17 @@ public class Json extends HttpServlet{
      */
     protected void addBook(HttpServletRequest request, HttpServletResponse response) throws IOException {
         getStory gt = new getStory();
-        String title = fixUrl(getParts(request.getRequestURI(), 5));
-        String[] content = separatePages(getParts(request.getRequestURI(),6));
+        BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+        String json = "";
+
+        if (br != null) {
+            json = br.readLine();
+        }
+
+        JSONObject jsonObject = new JSONObject(json);
+
+        String title = jsonObject.getString("title");
+        String[] content = separatePages(jsonObject.getString("page"));
 
         gt.addTitle(title);
         int storyID = gt.getBookID(title);
@@ -317,8 +338,17 @@ public class Json extends HttpServlet{
      * @param request used to get the URI.
      * @param response used to communicate with client.
      */
-    protected void deleteStory(HttpServletRequest request, HttpServletResponse response) {
-        int bookid = Integer.parseInt(getParts(request.getRequestURI(), 3));
+    protected void deleteStory(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+        String json = "";
+
+        if (br != null) {
+            json = br.readLine();
+        }
+
+        JSONObject jsonObject = new JSONObject(json);
+
+        int bookid = jsonObject.getInt("bookID");
 
         new getStory().deleteStory(bookid);
 
@@ -332,22 +362,11 @@ public class Json extends HttpServlet{
      * @return the book separated into pages.
      */
     private String[] separatePages(String book) {
-        String[] pages = book.split("~PAGE");
+        String[] pages = book.split("</PAGE>");
         for (int i = 0; i < pages.length; i++) {
             pages[i] = fixPage(pages[i]);
         }
         return pages;
-    }
-
-    /**
-     * Gets the part of the URI.
-     * @param uri URI to split.
-     * @param index index to return.
-     * @return the string at the current index.
-     */
-    private String  getParts(String uri, int index) {
-        String[] parts = uri.split("/");
-        return parts[index];
     }
 
     /**
@@ -356,7 +375,7 @@ public class Json extends HttpServlet{
      * @return the page without the <PAGE></PAGE> tags.
      */
     private String fixPage(String page) {
-        return page.replaceAll("PAGE", "").replaceAll("~PAGE"," ").replaceAll("%20"," ").replaceAll("%60","");
+        return page.replaceAll("<PAGE>", "").replaceAll("</PAGE>"," ");
     }
 
     /**

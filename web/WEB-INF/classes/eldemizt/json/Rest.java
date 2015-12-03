@@ -50,7 +50,7 @@ public class Rest extends HttpServlet {
         URL url = new URL(req.getRequestURL().toString());
         String urlPath = url.getPath();
         String parts[] = urlPath.split("/");
-        String key = parts[4];
+        String key = parts[3];
 
         if (!keyCheck(key)) {
             new Json().deleteStory(req,resp);
@@ -73,6 +73,7 @@ public class Rest extends HttpServlet {
         URL url = new URL(req.getRequestURL().toString());
         String urlPath = url.getPath();
         String parts[] = urlPath.split("/");
+
         if (!keyCheck(parts[4])) {
             if (parts[3].equals("addbook")) new Json().addBook(req, resp);
             else if (parts[3].equals("addpage")) new Json().addPage(req, resp);
@@ -96,8 +97,14 @@ public class Rest extends HttpServlet {
         String urlPath = url.getPath();
         String parts[] = urlPath.split("/");
 
-        if (parts[3].equals("editStory")) new Json().editStory(req, resp);
-        else if (parts[3].equals("editTitle")) new Json().editTitleAndAuthor(req, resp);
+        if (!keyCheck(parts[4])) {
+            if (parts[3].equals("editStory")) new Json().editStory(req, resp);
+            else if (parts[3].equals("editTitle")) new Json().editTitle(req, resp);
+        }
+        else {
+            resp.setStatus(400);
+            resp.setContentType("application/json");
+        }
     }
 
     /**

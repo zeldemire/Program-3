@@ -45,17 +45,16 @@ public class Login extends HttpServlet {
 
     /**
      * Tests to see if the given password matches the one in the database.
-     * @param password password from the user.
      * @return true if passwords match, false if they don't.
      */
-    public boolean testPassword(String password) {
+    public boolean testPassword() {
         String content = null;
         try {
             connect();
             Statement stmt = conn.createStatement();
-            String sql = "SELECT user_name,password FROM login WHERE user_name='"+username+"'";
+            String sql = "SELECT user_name,password FROM login WHERE user_name='" + username + "'";
             ResultSet rs = stmt.executeQuery(sql);
-            while(rs.next()) {
+            while (rs.next()) {
                 content = rs.getString("password");
             }
             rs.close();
@@ -64,7 +63,7 @@ public class Login extends HttpServlet {
             Log.log("Invalid password for username: " + username);
             e.printStackTrace();
         }
-        return password.equals(content);
+        return content != null && content.equals(generateHash());
     }
 
     /**
@@ -144,6 +143,11 @@ public class Login extends HttpServlet {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static void main(String[] args) {
+        Login login = new Login("test", "test");
+        System.out.println(login.testPassword());
     }
 }
 
